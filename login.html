@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Smart Water Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0,255,140,.10), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(0,100,255,.13), transparent 35%),
+                #020b16;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,255,140,.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,140,.035) 1px, transparent 1px);
+            background-size: 45px 45px;
+            pointer-events: none;
+        }
+
+        .login-box {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+            padding: 42px 35px;
+            border: 1px solid rgba(39,245,154,.20);
+            border-radius: 22px;
+            background: rgba(5,20,32,.78);
+            backdrop-filter: blur(18px);
+            box-shadow:
+                0 25px 70px rgba(0,0,0,.45),
+                0 0 35px rgba(39,245,154,.05);
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 22px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            font-weight: bold;
+            color: #27f59a;
+            border: 1px solid rgba(39,245,154,.45);
+            background: rgba(39,245,154,.06);
+            box-shadow: 0 0 30px rgba(39,245,154,.10);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 25px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8298a5;
+            font-size: 13px;
+            margin-top: 9px;
+            margin-bottom: 32px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b9c8d0;
+            font-size: 13px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(130,160,175,.18);
+            outline: none;
+            background: rgba(255,255,255,.035);
+            color: white;
+            font-size: 14px;
+            transition: .3s;
+        }
+
+        input:focus {
+            border-color: #27f59a;
+            box-shadow: 0 0 18px rgba(39,245,154,.10);
+        }
+
+        .password-row {
+            position: relative;
+        }
+
+        .toggle {
+            position: absolute;
+            right: 13px;
+            top: 14px;
+            border: none;
+            background: none;
+            color: #6f8794;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .requirements {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 9px;
+            background: rgba(255,255,255,.025);
+            color: #718792;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .requirements span {
+            display: block;
+        }
+
+        .valid {
+            color: #27f59a;
+        }
+
+        .invalid {
+            color: #718792;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            background: #27f59a;
+            color: #02100b;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(39,245,154,.25);
+        }
+
+        .forgot {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #27f59a;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .forgot:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            display: none;
+            margin-top: 15px;
+            padding: 11px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .error {
+            display: block;
+            color: #ff7777;
+            background: rgba(255,70,70,.07);
+            border: 1px solid rgba(255,70,70,.15);
+        }
+
+        @media(max-width:500px) {
+            .login-box {
+                padding: 35px 23px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="grid"></div>
+
+<div class="login-box">
+
+    <div class="logo">SW</div>
+
+    <h1>SMART WATER MANAGEMENT</h1>
+
+    <p class="subtitle">
+        Secure system access
+    </p>
+
+    <form onsubmit="login(event)">
+
+        <div class="field">
+            <label>USERNAME</label>
+            <input
+                type="text"
+                id="username"
+                placeholder="Enter username"
+                autocomplete="username"
+                required
+            >
+        </div>
+
+        <div class="field">
+
+            <label>PASSWORD</label>
+
+            <div class="password-row">
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter password"
+                    autocomplete="current-password"
+                    required
+                    oninput="checkPassword()"
+                >
+
+                <button
+                    type="button"
+                    class="toggle"
+                    onclick="togglePassword()"
+                >
+                    SHOW
+                </button>
+            </div>
+
+            <div class="requirements">
+                <span id="length" class="invalid">
+                    • Minimum 8 characters
+                </span>
+
+                <span id="upper" class="invalid">
+                    • Uppercase letter
+                </span>
+
+                <span id="lower" class="invalid">
+                    • Lowercase letter
+                </span>
+
+                <span id="number" class="invalid">
+                    • Number
+                </span>
+
+                <span id="special" class="invalid">
+                    • Special character
+                </span>
+            </div>
+
+        </div>
+
+        <button class="login-btn" type="submit">
+            LOGIN
+        </button>
+
+        <a href="#" class="forgot" onclick="forgotPassword(event)">
+            Forgot Password?
+        </a>
+
+        <div id="message" class="message"></div>
+
+    </form>
+
+</div>
+
+<script>
+
+function togglePassword() {
+
+    const password = document.getElementById("password");
+    const button = document.querySelector(".toggle");
+
+    if (password.type === "password") {
+        password.type = "text";
+        button.textContent = "HIDE";
+    } else {
+        password.type = "password";
+        button.textContent = "SHOW";
+    }
+}
+
+
+function checkPassword() {
+
+    const password = document.getElementById("password").value;
+
+    updateRule(
+        "length",
+        password.length >= 8
+    );
+
+    updateRule(
+        "upper",
+        /[A-Z]/.test(password)
+    );
+
+    updateRule(
+        "lower",
+        /[a-z]/.test(password)
+    );
+
+    updateRule(
+        "number",
+        /[0-9]/.test(password)
+    );
+
+    updateRule(
+        "special",
+        /[^A-Za-z0-9]/.test(password)
+    );
+}
+
+
+function updateRule(id, valid) {
+
+    const element = document.getElementById(id);
+
+    element.className = valid ? "valid" : "invalid";
+}
+
+
+function login(event) {
+
+    event.preventDefault();
+
+    const username =
+        document.getElementById("username").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+    const message =
+        document.getElementById("message");
+
+    const strongPassword =
+        password.length >= 8 &&
+        /[A-Z]/.test(password) &&
+        /[a-z]/.test(password) &&
+        /[0-9]/.test(password) &&
+        /[^A-Za-z0-9]/.test(password);
+
+    if (!username) {
+
+        showMessage("Please enter your username.");
+        return;
+    }
+
+    if (!strongPassword) {
+
+        showMessage(
+            "Password does not meet the security requirements."
+        );
+
+        return;
+    }
+
+    /*
+       IMPORTANT:
+       No real username or password is hard-coded here.
+
+       Real authentication should later be handled
+       by a secure backend/API.
+
+       Temporary development navigation:
+    */
+
+    sessionStorage.setItem("authenticated", "true");
+
+    window.location.href = "dashboard.html";
+}
+
+
+function showMessage(text) {
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+    message.className = "message error";
+}
+
+
+function forgotPassword(event) {
+
+    event.preventDefault();
+
+    alert(
+        "Password recovery will be connected to the secure backend."
+    );
+}
+
+</script>
+
+</body>
+</html>

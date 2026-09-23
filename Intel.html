@@ -1,0 +1,49 @@
+.title {
+    font-size: clamp(42px, 8vw, 90px);
+    font-weight: 800;
+    letter-spacing: 4px;
+    line-height: 1.05;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        #27f59a,
+        #ffffff
+    );
+
+    background-size: 200% auto;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    animation:
+        titleIn 1.5s ease forwards,
+        shine 5s linear infinite;
+}
+
+@keyframes titleIn {
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+        letter-spacing: 15px;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        letter-spacing: 4px;
+    }
+}
+
+@keyframes shine {
+    from {
+        background-position: 0% center;
+    }
+
+    to {
+        background-position: 200% center;
+    }
+}

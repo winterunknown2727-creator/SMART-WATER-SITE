@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Motor Management | Smart Water</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#020b16;
+    color:#fff;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+    background:#041321;
+    border-right:1px solid rgba(39,245,154,.12);
+    padding:25px 15px;
+    z-index:100;
+}
+
+.logo{
+    padding:8px 15px 25px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    margin-bottom:20px;
+}
+
+.logo h2{
+    font-size:18px;
+}
+
+.logo span{
+    color:#27f59a;
+}
+
+.logo small{
+    display:block;
+    color:#667d89;
+    font-size:10px;
+    letter-spacing:2px;
+    margin-top:7px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.nav a{
+    text-decoration:none;
+    color:#8398a5;
+    padding:13px 15px;
+    border-radius:9px;
+    font-size:13px;
+    transition:.3s;
+}
+
+.nav a:hover,
+.nav a.active{
+    color:#27f59a;
+    background:rgba(39,245,154,.07);
+}
+
+.logout{
+    position:absolute;
+    bottom:25px;
+    left:15px;
+    right:15px;
+}
+
+.logout a{
+    color:#ff7777;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    min-height:100vh;
+}
+
+/* TOPBAR */
+
+.topbar{
+    height:75px;
+    padding:0 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    background:#020b16;
+}
+
+.page-title h1{
+    font-size:20px;
+}
+
+.page-title p{
+    color:#617784;
+    font-size:11px;
+    margin-top:5px;
+}
+
+.connection{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:9px 14px;
+    border-radius:20px;
+    color:#d2aa62;
+    background:rgba(255,190,70,.04);
+    border:1px solid rgba(255,190,70,.15);
+    font-size:10px;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#d2aa62;
+}
+
+/* CONTENT */
+
+.content{
+    padding:30px;
+}
+
+.content-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.content-header h2{
+    font-size:23px;
+}
+
+.content-header p{
+    color:#687e8a;
+    font-size:12px;
+    margin-top:7px;
+}
+
+.add-btn{
+    border:none;
+    border-radius:9px;
+    padding:13px 18px;
+    background:#27f59a;
+    color:#02100b;
+    font-weight:bold;
+    font-size:12px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.add-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 25px rgba(39,245,154,.25);
+}
+
+/* MOTOR GRID */
+
+.motor-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.empty{
+    grid-column:1/-1;
+    padding:60px 20px;
+    text-align:center;
+    border:1px dashed rgba(39,245,154,.15);
+    border-radius:15px;
+    background:rgba(255,255,255,.015);
+}
+
+.empty-icon{
+    font-size:35px;
+    margin-bottom:15px;
+    opacity:.5;
+}
+
+.empty h3{
+    font-size:16px;
+}
+
+.empty p{
+    color:#607681;
+    font-size:12px;
+    margin-top:8px;
+}
+
+/* MOTOR CARD */
+
+.motor-card{
+    background:#061725;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:15px;
+    padding:20px;
+    transition:.3s;
+}
+
+.motor-card:hover{
+    border-color:rgba(39,245,154,.22);
+    transform:translateY(-3px);
+}
+
+.motor-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.motor-name{
+    font-size:15px;
+    font-weight:bold;
+}
+
+.motor-status{
+    padding:5px 9px;
+    border-radius:20px;
+    background:rgba(255,190,70,.06);
+    color:#d2aa62;
+    font-size:9px;
+}
+
+.motor-icon{
+    height:125px;
+    margin:20px 0;
+    border-radius:12px;
+    background:#03111d;
+    border:1px solid rgba(255,255,255,.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:43px;
+    color:#526b78;
+}
+
+.motor-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.info{
+    padding:11px;
+    border-radius:8px;
+    background:rgba(255,255,255,.025);
+}
+
+.info span{
+    display:block;
+    color:#607783;
+    font-size:9px;
+    margin-bottom:5px;
+}
+
+.info strong{
+    font-size:11px;
+}
+
+.motor-footer{
+    margin-top:15px;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.05);
+    display:flex;
+    justify-content:space-between;
+}
+
+.motor-footer button{
+    border:none;
+    background:none;
+    color:#27f59a;
+    cursor:pointer;
+    font-size:10px;
+}
+
+.delete{
+    color:#ff7777 !important;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(7px);
+    z-index:200;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal-box{
+    width:100%;
+    max-width:440px;
+    max-height:90vh;
+    overflow-y:auto;
+    background:#061725;
+    border:1px solid rgba(39,245,154,.16);
+    border-radius:17px;
+    padding:25px;
+}
+
+.modal-box h2{
+    font-size:18px;
+}
+
+.modal-box p{
+    color:#657b87;
+    font-size:11px;
+    margin-top:7px;
+    margin-bottom:22px;
+}
+
+.field{
+    margin-bottom:16px;
+}
+
+.field label{
+    display:block;
+    color:#9aabb4;
+    font-size:11px;
+    margin-bottom:7px;
+}
+
+.field input,
+.field select{
+    width:100%;
+    padding:13px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,.08);
+    outline:none;
+    background:#03111d;
+    color:#fff;
+}
+
+.field input:focus,
+.field select:focus{
+    border-color:#27f59a;
+}
+
+.field select option{
+    background:#061725;
+}
+
+.checkbox-area{
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:9px;
+    padding:12px;
+    max-height:130px;
+    overflow-y:auto;
+}
+
+.checkbox-item{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:6px 0;
+    color:#a1b1b9;
+    font-size:11px;
+}
+
+.checkbox-item input{
+    width:auto;
+    accent-color:#27f59a;
+}
+
+.no-tanks{
+    color:#627985;
+    font-size:11px;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.modal-buttons button{
+    flex:1;
+    padding:12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.cancel{
+    background:transparent;
+    border:1px solid rgba(255,255,255,.10);
+    color:#8398a5;
+}
+
+.create{
+    background:#27f59a;
+    border:none;
+    color:#02100b;
+    font-weight:bold;
+}
+
+/* MOBILE */
+
+.menu-btn{
+    display:none;
+    background:none;
+    border:none;
+    color:#27f59a;
+    font-size:22px;
+}
+
+@media(max-width:1050px){
+
+    .motor-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.3s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .topbar{
+        padding:0 18px;
+    }
+
+    .content{
+        padding:18px;
+    }
+
+    .content-header{
+        align-items:flex-start;
+        gap:15px;
+    }
+
+    .content-header h2{
+        font-size:19px;
+    }
+
+    .add-btn{
+        white-space:nowrap;
+        padding:11px 13px;
+    }
+
+    .motor-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        <h2>SMART<span>WATER</span></h2>
+        <small>MANAGEMENT SYSTEM</small>
+    </div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="tanks.html">Tanks</a>
+
+        <a href="motors.html" class="active">Motors</a>
+
+        <a href="monitoring.html">Live Monitoring</a>
+
+        <a href="automation.html">Automation</a>
+
+        <a href="alerts.html">Alerts</a>
+
+        <a href="analytics.html">Analytics</a>
+
+        <a href="activity.html">Activity History</a>
+
+        <a href="settings.html">Settings</a>
+
+    </nav>
+
+    <div class="logout">
+        <a href="login.html">Logout</a>
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+<header class="topbar">
+
+    <div style="display:flex;align-items:center;gap:15px;">
+
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+        <div class="page-title">
+
+            <h1>Motor Management</h1>
+
+            <p>
+                Configure automated water-control motors
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="connection">
+
+        <span class="dot"></span>
+
+        WAITING FOR CONNECTION
+
+    </div>
+
+</header>
+
+
+<section class="content">
+
+    <div class="content-header">
+
+        <div>
+
+            <h2>Water Motors</h2>
+
+            <p>
+                Add any number of motors and assign them
+                to configured tanks.
+            </p>
+
+        </div>
+
+        <button class="add-btn" onclick="openModal()">
+            + ADD NEW MOTOR
+        </button>
+
+    </div>
+
+
+    <div class="motor-grid" id="motorGrid">
+
+        <div class="empty" id="emptyState">
+
+            <div class="empty-icon">◉</div>
+
+            <h3>No Motors Configured</h3>
+
+            <p>
+                Add your first motor to begin configuration.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- ADD MOTOR MODAL -->
+
+<div class="modal" id="motorModal">
+
+    <div class="modal-box">
+
+        <h2>Add New Motor</h2>
+
+        <p>
+            Configure a motor and assign it to one or
+            more water tanks.
+        </p>
+
+
+        <div class="field">
+
+            <label>MOTOR NAME</label>
+
+            <input
+                type="text"
+                id="motorName"
+                placeholder="Example: Motor 01"
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label>CONTROL MODE</label>
+
+            <select id="motorMode">
+
+                <option value="Automatic">
+                    Automatic
+                </option>
+
+                <option value="Manual">
+                    Manual
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>ASSIGN TANKS</label>
+
+            <div
+                class="checkbox-area"
+                id="tankSelection">
+            </div>
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button class="cancel" onclick="closeModal()">
+                CANCEL
+            </button>
+
+            <button class="create" onclick="addMotor()">
+                CREATE MOTOR
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* MOBILE MENU */
+
+function toggleMenu(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/* DATA */
+
+let motors =
+    JSON.parse(
+        localStorage.getItem("smartWaterMotors")
+    ) || [];
+
+
+let tanks =
+    JSON.parse(
+        localStorage.getItem("smartWaterTanks")
+    ) || [];
+
+
+/* MODAL */
+
+function openModal(){
+
+    updateTankSelection();
+
+    document
+        .getElementById("motorModal")
+        .style.display = "flex";
+
+    document
+        .getElementById("motorName")
+        .focus();
+
+}
+
+
+function closeModal(){
+
+    document
+        .getElementById("motorModal")
+        .style.display = "none";
+
+}
+
+
+/* TANK SELECTION */
+
+function updateTankSelection(){
+
+    const area =
+        document.getElementById("tankSelection");
+
+
+    if(tanks.length === 0){
+
+        area.innerHTML = `
+            <div class="no-tanks">
+                No tanks configured yet.
+                Add tanks from Tank Management first.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    area.innerHTML = "";
+
+
+    tanks.forEach(tank => {
+
+        const item =
+            document.createElement("label");
+
+        item.className = "checkbox-item";
+
+
+        item.innerHTML = `
+
+            <input
+                type="checkbox"
+                value="${tank.id}"
+            >
+
+            ${escapeHTML(tank.name)}
+
+        `;
+
+
+        area.appendChild(item);
+
+    });
+
+}
+
+
+/* ADD MOTOR */
+
+function addMotor(){
+
+    const name =
+        document
+        .getElementById("motorName")
+        .value
+        .trim();
+
+
+    const mode =
+        document
+        .getElementById("motorMode")
+        .value;
+
+
+    if(!name){
+
+        alert("Please enter a motor name.");
+
+        return;
+    }
+
+
+    const selected =
+        [...document.querySelectorAll(
+            "#tankSelection input:checked"
+        )].map(
+            checkbox => checkbox.value
+        );
+
+
+    const motor = {
+
+        id: Date.now(),
+
+        name: name,
+
+        mode: mode,
+
+        assignedTanks: selected,
+
+        status: "WAITING",
+
+        runningTime: null,
+
+        controlStatus: "NO DATA",
+
+        lastUpdated: null
+
+    };
+
+
+    motors.push(motor);
+
+
+    localStorage.setItem(
+        "smartWaterMotors",
+        JSON.stringify(motors)
+    );
+
+
+    document
+        .getElementById("motorName")
+        .value = "";
+
+
+    closeModal();
+
+    renderMotors();
+
+}
+
+
+/* RENDER */
+
+function renderMotors(){
+
+    const grid =
+        document.getElementById("motorGrid");
+
+    const empty =
+        document.getElementById("emptyState");
+
+
+    document
+        .querySelectorAll(".motor-card")
+        .forEach(card => card.remove());
+
+
+    if(motors.length === 0){
+
+        empty.style.display = "block";
+
+        return;
+    }
+
+
+    empty.style.display = "none";
+
+
+    motors.forEach(motor => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "motor-card";
+
+
+        const assignedNames =
+            motor.assignedTanks
+            .map(id => {
+
+                const tank =
+                    tanks.find(
+                        t => String(t.id) === String(id)
+                    );
+
+                return tank
+                    ? tank.name
+                    : null;
+
+            })
+            .filter(Boolean);
+
+
+        card.innerHTML = `
+
+            <div class="motor-header">
+
+                <div class="motor-name">
+                    ${escapeHTML(motor.name)}
+                </div>
+
+                <div class="motor-status">
+                    ${motor.status}
+                </div>
+
+            </div>
+
+
+            <div class="motor-icon">
+                ◉
+            </div>
+
+
+            <div class="motor-info">
+
+                <div class="info">
+
+                    <span>MODE</span>
+
+                    <strong>
+                        ${motor.mode}
+                    </strong>
+
+                </div>
+
+
+                <div class="info">
+
+                    <span>STATUS</span>
+
+                    <strong>
+                        ${motor.status}
+                    </strong>
+
+                </div>
+
+
+                <div class="info">
+
+                    <span>ASSIGNED TANKS</span>
+
+                    <strong>
+                        ${
+                            assignedNames.length
+                            ? assignedNames.length
+                            : "0"
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="info">
+
+                    <span>RUNNING TIME</span>
+
+                    <strong>
+                        ${
+                            motor.runningTime
+                            || "—"
+                        }
+                    </strong>
+
+                </div>
+
+
+                <div class="info">
+
+                    <span>CONTROL</span>
+
+                    <strong>
+                        ${motor.controlStatus}
+                    </strong>
+
+                </div>
+
+
+                <div class="info">
+
+                    <span>LAST UPDATED</span>
+
+                    <strong>
+                        ${
+                            motor.lastUpdated
+                            || "—"
+                        }
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="motor-footer">
+
+                <button
+                    onclick="viewMotor(${motor.id})">
+                    VIEW DETAILS
+                </button>
+
+                <button
+                    class="delete"
+                    onclick="deleteMotor(${motor.id})">
+                    DELETE
+                </button>
+
+            </div>
+
+        `;
+
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+/* VIEW */
+
+function viewMotor(id){
+
+    const motor =
+        motors.find(
+            m => m.id === id
+        );
+
+
+    if(!motor) return;
+
+
+    const assignedNames =
+        motor.assignedTanks
+        .map(id => {
+
+            const tank =
+                tanks.find(
+                    t => String(t.id) === String(id)
+                );
+
+            return tank
+                ? tank.name
+                : null;
+
+        })
+        .filter(Boolean);
+
+
+    alert(
+
+        motor.name +
+
+        "\n\nMode: " +
+        motor.mode +
+
+        "\nStatus: " +
+        motor.status +
+
+        "\nAssigned Tanks: " +
+        (
+            assignedNames.length
+            ? assignedNames.join(", ")
+            : "None"
+        )
+
+    );
+
+}
+
+
+/* DELETE */
+
+function deleteMotor(id){
+
+    if(!confirm(
+        "Delete this motor configuration?"
+    )){
+        return;
+    }
+
+
+    motors =
+        motors.filter(
+            motor => motor.id !== id
+        );
+
+
+    localStorage.setItem(
+        "smartWaterMotors",
+        JSON.stringify(motors)
+    );
+
+
+    renderMotors();
+
+}
+
+
+/* SECURITY */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* INITIAL LOAD */
+
+renderMotors();
+
+</script>
+
+</body>
+</html>

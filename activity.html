@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Activity History | Smart Water Site</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#06101d;
+    color:#f2fff9;
+    min-height:100vh;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+
+    background:#071525;
+
+    border-right:1px solid rgba(0,255,140,.18);
+
+    padding:25px 15px;
+
+    z-index:1000;
+}
+
+.logo{
+    text-align:center;
+
+    font-size:21px;
+    font-weight:800;
+
+    color:#20ff91;
+
+    letter-spacing:1px;
+
+    margin-bottom:35px;
+}
+
+.logo span{
+    display:block;
+
+    color:white;
+
+    font-size:11px;
+
+    margin-top:5px;
+
+    letter-spacing:2px;
+}
+
+.nav a{
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    text-decoration:none;
+
+    color:#9bb2aa;
+
+    padding:14px 15px;
+
+    margin:5px 0;
+
+    border-radius:12px;
+
+    transition:.25s;
+
+    font-size:14px;
+}
+
+.nav a:hover,
+.nav a.active{
+
+    color:#20ff91;
+
+    background:rgba(32,255,145,.09);
+
+    box-shadow:inset 3px 0 #20ff91;
+}
+
+.logout{
+
+    position:absolute;
+
+    bottom:25px;
+
+    left:15px;
+
+    right:15px;
+}
+
+.logout a{
+    color:#ff7777;
+}
+
+
+/* ================= MAIN ================= */
+
+.main{
+
+    margin-left:250px;
+
+    padding:25px;
+}
+
+.menu-btn{
+    display:none;
+}
+
+
+/* ================= TOPBAR ================= */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+}
+
+.page-title h1{
+    font-size:27px;
+}
+
+.page-title p{
+
+    color:#7e9990;
+
+    font-size:13px;
+
+    margin-top:6px;
+}
+
+.connection{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    padding:10px 15px;
+
+    border-radius:30px;
+
+    border:1px solid rgba(255,193,7,.3);
+
+    background:rgba(255,193,7,.06);
+
+    color:#ffc107;
+
+    font-size:11px;
+
+    font-weight:bold;
+}
+
+.dot{
+
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:#ffc107;
+
+    box-shadow:0 0 10px #ffc107;
+}
+
+
+/* ================= SUMMARY ================= */
+
+.summary{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:15px;
+
+    margin-bottom:22px;
+}
+
+.card{
+
+    background:#091827;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    border-radius:17px;
+
+    padding:20px;
+}
+
+.card-title{
+
+    color:#71877f;
+
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+}
+
+.card-value{
+
+    color:#20ff91;
+
+    font-size:24px;
+
+    font-weight:800;
+
+    margin-top:13px;
+}
+
+.card-sub{
+
+    color:#5f766d;
+
+    font-size:10px;
+
+    margin-top:6px;
+}
+
+
+/* ================= PANEL ================= */
+
+.panel{
+
+    background:#091827;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    border-radius:20px;
+
+    padding:23px;
+
+    margin-bottom:20px;
+}
+
+.panel-title{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+}
+
+.panel-title h2{
+    font-size:18px;
+}
+
+.panel-title span{
+
+    color:#71877f;
+
+    font-size:10px;
+}
+
+
+/* ================= FILTER ================= */
+
+.filters{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:20px;
+}
+
+select,
+input{
+
+    background:#07131f;
+
+    border:1px solid rgba(32,255,145,.15);
+
+    color:#cfeee1;
+
+    border-radius:9px;
+
+    padding:10px 12px;
+
+    outline:none;
+
+    font-size:12px;
+}
+
+button{
+
+    background:#0b6545;
+
+    border:1px solid rgba(32,255,145,.3);
+
+    color:#20ff91;
+
+    border-radius:9px;
+
+    padding:10px 15px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    font-size:11px;
+}
+
+button:hover{
+
+    background:#0e8056;
+}
+
+
+/* ================= EMPTY ================= */
+
+.empty{
+
+    border:1px dashed rgba(32,255,145,.13);
+
+    border-radius:17px;
+
+    padding:50px 20px;
+
+    text-align:center;
+}
+
+.empty-icon{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:50%;
+
+    margin:0 auto 15px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:rgba(32,255,145,.06);
+
+    border:1px solid rgba(32,255,145,.16);
+
+    color:#20ff91;
+
+    font-size:27px;
+}
+
+.empty h3{
+
+    color:#c5d8d1;
+
+    margin-bottom:8px;
+}
+
+.empty p{
+
+    color:#657d74;
+
+    font-size:12px;
+
+    line-height:1.6;
+
+    max-width:500px;
+
+    margin:auto;
+}
+
+
+/* ================= ACTIVITY ITEM ================= */
+
+.activity{
+
+    display:flex;
+
+    gap:15px;
+
+    padding:17px;
+
+    border-radius:14px;
+
+    background:#07131f;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    margin-bottom:11px;
+}
+
+.activity-icon{
+
+    width:43px;
+
+    height:43px;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-shrink:0;
+
+    color:#20ff91;
+
+    background:rgba(32,255,145,.06);
+
+    border:1px solid rgba(32,255,145,.13);
+
+    font-size:18px;
+}
+
+.activity-content{
+
+    flex:1;
+}
+
+.activity-content h3{
+
+    font-size:14px;
+
+    margin-bottom:5px;
+}
+
+.activity-content p{
+
+    color:#71877f;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+.activity-time{
+
+    color:#536860;
+
+    font-size:10px;
+
+    white-space:nowrap;
+}
+
+
+/* ================= INFO ================= */
+
+.info{
+
+    padding:16px;
+
+    border-radius:14px;
+
+    background:rgba(255,193,7,.045);
+
+    border:1px solid rgba(255,193,7,.13);
+
+    color:#a89762;
+
+    font-size:11px;
+
+    line-height:1.6;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+
+    .sidebar{
+
+        transform:translateX(-100%);
+
+        transition:.3s;
+    }
+
+    .sidebar.open{
+
+        transform:translateX(0);
+    }
+
+    .main{
+
+        margin-left:0;
+
+        padding:18px;
+    }
+
+    .menu-btn{
+
+        display:block;
+
+        background:#0a1c2d;
+
+        border:1px solid rgba(32,255,145,.2);
+
+        color:#20ff91;
+
+        padding:10px 13px;
+
+        border-radius:10px;
+
+        margin-bottom:15px;
+    }
+
+    .summary{
+
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+
+@media(max-width:500px){
+
+    .page-title h1{
+
+        font-size:21px;
+    }
+
+    .connection{
+
+        font-size:9px;
+
+        padding:8px;
+    }
+
+    .card{
+
+        padding:15px;
+    }
+
+    .card-value{
+
+        font-size:21px;
+    }
+
+    .activity{
+
+        align-items:flex-start;
+    }
+
+    .activity-time{
+
+        display:none;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+
+        SMART-WATER-SITE
+
+        <span>
+            WATER MANAGEMENT
+        </span>
+
+    </div>
+
+
+    <nav class="nav">
+
+        <a href="dashboard.html">
+            ◈ Dashboard
+        </a>
+
+        <a href="tanks.html">
+            ▣ Tanks
+        </a>
+
+        <a href="motors.html">
+            ⚙ Motors
+        </a>
+
+        <a href="monitoring.html">
+            ◉ Live Monitoring
+        </a>
+
+        <a href="automation.html">
+            ↻ Automation
+        </a>
+
+        <a href="alerts.html">
+            ⚠ Alerts
+        </a>
+
+        <a href="analytics.html">
+            ▥ Analytics
+        </a>
+
+        <a href="activity.html"
+           class="active">
+
+            ◷ Activity
+
+        </a>
+
+        <a href="settings.html">
+            ⚙ Settings
+        </a>
+
+    </nav>
+
+
+    <div class="logout">
+
+        <a href="login.html">
+            ↪ Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+
+<button class="menu-btn"
+        onclick="toggleMenu()">
+
+    ☰ Menu
+
+</button>
+
+
+
+<!-- ================= TOPBAR ================= -->
+
+<div class="topbar">
+
+
+    <div class="page-title">
+
+        <h1>
+            Activity History
+        </h1>
+
+        <p>
+            Track verified system events and activities
+        </p>
+
+    </div>
+
+
+    <div class="connection">
+
+        <span class="dot"></span>
+
+        WAITING FOR CONNECTION
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ================= SUMMARY ================= -->
+
+<section class="summary">
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Total Events
+        </div>
+
+        <div class="card-value"
+             id="totalEvents">
+
+            0
+
+        </div>
+
+        <div class="card-sub">
+            No recorded events
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Today
+        </div>
+
+        <div class="card-value"
+             id="todayEvents">
+
+            0
+
+        </div>
+
+        <div class="card-sub">
+            Today's activities
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-title">
+            System Events
+        </div>
+
+        <div class="card-value"
+             id="systemEvents">
+
+            0
+
+        </div>
+
+        <div class="card-sub">
+            Verified system events
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Data State
+        </div>
+
+        <div class="card-value">
+            WAITING
+        </div>
+
+        <div class="card-sub">
+            Awaiting real data
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================= ACTIVITY PANEL ================= -->
+
+<section class="panel">
+
+
+    <div class="panel-title">
+
+        <h2>
+            Activity Log
+        </h2>
+
+        <span>
+            REAL-TIME READY
+        </span>
+
+    </div>
+
+
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+        <select id="typeFilter"
+                onchange="filterActivities()">
+
+            <option value="all">
+                All Activity
+            </option>
+
+            <option value="system">
+                System
+            </option>
+
+            <option value="tank">
+                Tank
+            </option>
+
+            <option value="motor">
+                Motor
+            </option>
+
+            <option value="alert">
+                Alert
+            </option>
+
+        </select>
+
+
+        <input
+            type="date"
+            id="dateFilter"
+            onchange="filterActivities()"
+        >
+
+
+        <button onclick="clearFilters()">
+            CLEAR FILTER
+        </button>
+
+    </div>
+
+
+
+    <!-- ACTIVITY CONTAINER -->
+
+    <div id="activityContainer">
+
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                ◷
+            </div>
+
+
+            <h3>
+                No Activity Recorded
+            </h3>
+
+
+            <p>
+                Verified system activities will appear
+                here when the application receives actual
+                events from the authorised backend or
+                connected system.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================= INFO ================= -->
+
+<div class="info">
+
+    ⚠ <b>Activity integrity:</b>
+    This page does not create fake events or timestamps.
+    Activity records will be added only when verified
+    events are received or securely stored by the system.
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+
+/* ================= MOBILE MENU ================= */
+
+function toggleMenu(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+
+/* ================= ACTIVITY DATA ================= */
+
+/*
+
+Future activity object:
+
+{
+    id: "event-id",
+    type: "system",
+    title: "System Connected",
+    message: "Verified device connection established",
+    time: "server timestamp"
+}
+
+*/
+
+
+let activities = [];
+
+
+
+/* ================= ESCAPE HTML ================= */
+
+function escapeHTML(value){
+
+    return String(value)
+
+        .replace(/&/g,"&amp;")
+
+        .replace(/</g,"&lt;")
+
+        .replace(/>/g,"&gt;")
+
+        .replace(/"/g,"&quot;")
+
+        .replace(/'/g,"&#039;");
+}
+
+
+
+/* ================= RENDER ================= */
+
+function renderActivities(list){
+
+    const container =
+        document.getElementById(
+            "activityContainer"
+        );
+
+
+    if(!list || list.length === 0){
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ◷
+                </div>
+
+                <h3>
+                    No Activity Recorded
+                </h3>
+
+                <p>
+                    No verified activity is available
+                    for the selected filters.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        list.map(item => `
+
+            <div class="activity">
+
+                <div class="activity-icon">
+                    ${getIcon(item.type)}
+                </div>
+
+                <div class="activity-content">
+
+                    <h3>
+                        ${escapeHTML(item.title)}
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(item.message)}
+                    </p>
+
+                </div>
+
+                <div class="activity-time">
+                    ${escapeHTML(item.time)}
+                </div>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+
+/* ================= ICON ================= */
+
+function getIcon(type){
+
+    if(type === "tank"){
+        return "▣";
+    }
+
+    if(type === "motor"){
+        return "⚙";
+    }
+
+    if(type === "alert"){
+        return "⚠";
+    }
+
+    return "◈";
+}
+
+
+
+/* ================= FILTER ================= */
+
+function filterActivities(){
+
+    const type =
+        document.getElementById(
+            "typeFilter"
+        ).value;
+
+
+    const date =
+        document.getElementById(
+            "dateFilter"
+        ).value;
+
+
+    let filtered =
+        activities.filter(item => {
+
+            const typeMatch =
+                type === "all" ||
+                item.type === type;
+
+
+            const dateMatch =
+                !date ||
+                item.time.startsWith(date);
+
+
+            return typeMatch && dateMatch;
+
+        });
+
+
+    renderActivities(filtered);
+
+}
+
+
+
+/* ================= CLEAR ================= */
+
+function clearFilters(){
+
+    document.getElementById(
+        "typeFilter"
+    ).value = "all";
+
+
+    document.getElementById(
+        "dateFilter"
+    ).value = "";
+
+
+    renderActivities(activities);
+
+}
+
+
+
+/* ================= ADD REAL EVENT ================= */
+
+/*
+
+Later the backend can call:
+
+addActivity({
+    type: "tank",
+    title: "Tank Updated",
+    message: "Verified tank reading received",
+    time: "2026-09-22 11:30"
+});
+
+*/
+
+function addActivity(event){
+
+    if(!event){
+        return;
+    }
+
+
+    activities.unshift({
+
+        id:
+            event.id ||
+            Date.now(),
+
+        type:
+            event.type ||
+            "system",
+
+        title:
+            event.title ||
+            "System Event",
+
+        message:
+            event.message ||
+            "Verified system event received",
+
+        time:
+            event.time ||
+            "—"
+
+    });
+
+
+    updateSummary();
+
+    filterActivities();
+
+}
+
+
+
+/* ================= SUMMARY ================= */
+
+function updateSummary(){
+
+    document.getElementById(
+        "totalEvents"
+    ).textContent =
+        activities.length;
+
+
+    const today =
+        new Date()
+        .toISOString()
+        .slice(0,10);
+
+
+    const todayCount =
+        activities.filter(item =>
+            item.time.startsWith(today)
+        ).length;
+
+
+    document.getElementById(
+        "todayEvents"
+    ).textContent =
+        todayCount;
+
+
+    const systemCount =
+        activities.filter(item =>
+            item.type === "system"
+        ).length;
+
+
+    document.getElementById(
+        "systemEvents"
+    ).textContent =
+        systemCount;
+
+}
+
+
+
+/* ================= INITIAL STATE ================= */
+
+updateSummary();
+
+renderActivities(activities);
+
+
+</script>
+
+
+</body>
+</html>

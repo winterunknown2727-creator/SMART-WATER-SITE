@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation | Smart Water Site</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#06101d;
+    color:#f2fff9;
+    min-height:100vh;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+    background:#071525;
+    border-right:1px solid rgba(0,255,140,.18);
+    padding:25px 15px;
+    z-index:1000;
+}
+
+.logo{
+    text-align:center;
+    font-size:21px;
+    font-weight:800;
+    color:#20ff91;
+    letter-spacing:1px;
+    margin-bottom:35px;
+}
+
+.logo span{
+    display:block;
+    color:white;
+    font-size:11px;
+    margin-top:5px;
+    letter-spacing:2px;
+}
+
+.nav a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    color:#9bb2aa;
+    padding:14px 15px;
+    margin:5px 0;
+    border-radius:12px;
+    transition:.25s;
+    font-size:14px;
+}
+
+.nav a:hover,
+.nav a.active{
+    color:#20ff91;
+    background:rgba(32,255,145,.09);
+    box-shadow:inset 3px 0 #20ff91;
+}
+
+.logout{
+    position:absolute;
+    bottom:25px;
+    left:15px;
+    right:15px;
+}
+
+.logout a{
+    color:#ff7777;
+}
+
+.main{
+    margin-left:250px;
+    padding:25px;
+}
+
+.menu-btn{
+    display:none;
+}
+
+/* TOP */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.page-title h1{
+    font-size:27px;
+}
+
+.page-title p{
+    color:#7e9990;
+    font-size:13px;
+    margin-top:6px;
+}
+
+.connection{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:10px 15px;
+    border-radius:30px;
+    border:1px solid rgba(255,193,7,.3);
+    background:rgba(255,193,7,.06);
+    color:#ffc107;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#ffc107;
+    box-shadow:0 0 10px #ffc107;
+}
+
+/* HERO */
+.hero{
+    background:linear-gradient(135deg,#0b2032,#081522);
+    border:1px solid rgba(32,255,145,.18);
+    border-radius:22px;
+    padding:30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+    overflow:hidden;
+    position:relative;
+}
+
+.hero:after{
+    content:"";
+    position:absolute;
+    width:280px;
+    height:280px;
+    right:-100px;
+    top:-150px;
+    border-radius:50%;
+    background:rgba(32,255,145,.06);
+    filter:blur(15px);
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+}
+
+.hero h2{
+    font-size:23px;
+    margin-bottom:9px;
+}
+
+.hero p{
+    color:#819a91;
+    font-size:13px;
+    line-height:1.6;
+    max-width:650px;
+}
+
+.auto-state{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    min-width:150px;
+}
+
+.auto-circle{
+    width:75px;
+    height:75px;
+    margin:auto;
+    border-radius:50%;
+    border:2px solid rgba(255,193,7,.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    color:#ffc107;
+    font-weight:bold;
+}
+
+.auto-state small{
+    display:block;
+    color:#728980;
+    margin-top:8px;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:20px;
+}
+
+.panel{
+    background:#091827;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:19px;
+    padding:22px;
+}
+
+.panel-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.panel-title h2{
+    font-size:17px;
+}
+
+.panel-title span{
+    color:#71877f;
+    font-size:11px;
+}
+
+/* RULE */
+.rule{
+    background:#07131f;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:15px;
+    padding:17px;
+    margin-bottom:12px;
+}
+
+.rule-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:13px;
+}
+
+.rule-name{
+    font-size:14px;
+    font-weight:bold;
+}
+
+.switch{
+    position:relative;
+    width:43px;
+    height:23px;
+}
+
+.switch input{
+    display:none;
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+    background:#182b38;
+    border-radius:30px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.slider:before{
+    content:"";
+    position:absolute;
+    width:17px;
+    height:17px;
+    left:3px;
+    top:3px;
+    background:#70847c;
+    border-radius:50%;
+    transition:.3s;
+}
+
+.switch input:checked + .slider{
+    background:#0b6f47;
+}
+
+.switch input:checked + .slider:before{
+    transform:translateX(20px);
+    background:#20ff91;
+    box-shadow:0 0 10px #20ff91;
+}
+
+.rule-text{
+    color:#7f968e;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.rule-values{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+}
+
+.value{
+    background:#0b1a28;
+    border-radius:10px;
+    padding:11px;
+}
+
+.value label{
+    display:block;
+    color:#5f756d;
+    font-size:9px;
+    text-transform:uppercase;
+    margin-bottom:5px;
+}
+
+.value strong{
+    font-size:13px;
+    color:#cdeee0;
+}
+
+/* RIGHT STATUS */
+.status-box{
+    background:#07131f;
+    border-radius:14px;
+    padding:17px;
+    margin-bottom:12px;
+}
+
+.status-box label{
+    display:block;
+    color:#60766e;
+    font-size:10px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+}
+
+.status-box strong{
+    font-size:15px;
+    color:#ffc107;
+}
+
+.notice{
+    margin-top:18px;
+    padding:15px;
+    border-radius:12px;
+    background:rgba(255,193,7,.06);
+    border:1px solid rgba(255,193,7,.16);
+    color:#a99763;
+    font-size:11px;
+    line-height:1.6;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.3s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        padding:18px;
+    }
+
+    .menu-btn{
+        display:block;
+        background:#0a1c2d;
+        color:#20ff91;
+        border:1px solid rgba(32,255,145,.2);
+        padding:10px 13px;
+        border-radius:10px;
+        margin-bottom:15px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .auto-state{
+        display:none;
+    }
+}
+
+@media(max-width:500px){
+
+    .page-title h1{
+        font-size:21px;
+    }
+
+    .connection{
+        font-size:9px;
+        padding:8px;
+    }
+
+    .hero{
+        padding:22px;
+    }
+
+    .hero h2{
+        font-size:19px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        SMART-WATER-SITE
+        <span>WATER MANAGEMENT</span>
+    </div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html">◈ Dashboard</a>
+
+        <a href="tanks.html">▣ Tanks</a>
+
+        <a href="motors.html">⚙ Motors</a>
+
+        <a href="monitoring.html">◉ Live Monitoring</a>
+
+        <a href="automation.html" class="active">↻ Automation</a>
+
+        <a href="alerts.html">⚠ Alerts</a>
+
+        <a href="analytics.html">▥ Analytics</a>
+
+        <a href="activity.html">◷ Activity</a>
+
+        <a href="settings.html">⚙ Settings</a>
+
+    </nav>
+
+    <div class="logout">
+        <a href="login.html">↪ Logout</a>
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+    <button class="menu-btn" onclick="toggleMenu()">
+        ☰ Menu
+    </button>
+
+
+    <div class="topbar">
+
+        <div class="page-title">
+
+            <h1>Automation</h1>
+
+            <p>
+                Configure intelligent water-control rules
+            </p>
+
+        </div>
+
+
+        <div class="connection" id="connectionBadge">
+
+            <span class="dot"></span>
+
+            WAITING FOR CONNECTION
+
+        </div>
+
+    </div>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h2>Intelligent Automation Control</h2>
+
+            <p>
+                Define automatic water-management conditions
+                for future real-time operation. Rules will only
+                execute when a valid device connection and
+                authorised live sensor data are available.
+            </p>
+
+        </div>
+
+
+        <div class="auto-state">
+
+            <div class="auto-circle">
+                STANDBY
+            </div>
+
+            <small>Automation Engine</small>
+
+        </div>
+
+    </section>
+
+
+    <div class="grid">
+
+
+        <!-- RULES -->
+
+        <section class="panel">
+
+            <div class="panel-title">
+
+                <h2>Automation Rules</h2>
+
+                <span id="ruleCount">
+                    0 ACTIVE
+                </span>
+
+            </div>
+
+
+            <!-- RULE 1 -->
+
+            <div class="rule">
+
+                <div class="rule-top">
+
+                    <div class="rule-name">
+                        Low Water Protection
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            class="ruleSwitch"
+                            onchange="updateRules()"
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="rule-text">
+
+                    When actual tank level falls below
+                    the configured threshold, automation
+                    may request water supply.
+
+                </div>
+
+
+                <div class="rule-values">
+
+                    <div class="value">
+
+                        <label>Trigger</label>
+
+                        <strong>Below 30%</strong>
+
+                    </div>
+
+
+                    <div class="value">
+
+                        <label>Action</label>
+
+                        <strong>Supply Request</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RULE 2 -->
+
+            <div class="rule">
+
+                <div class="rule-top">
+
+                    <div class="rule-name">
+                        High Water Protection
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            class="ruleSwitch"
+                            onchange="updateRules()"
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="rule-text">
+
+                    When actual tank level reaches
+                    the configured high threshold,
+                    automatic filling should stop.
+
+                </div>
+
+
+                <div class="rule-values">
+
+                    <div class="value">
+
+                        <label>Trigger</label>
+
+                        <strong>Above 90%</strong>
+
+                    </div>
+
+
+                    <div class="value">
+
+                        <label>Action</label>
+
+                        <strong>Stop Request</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RULE 3 -->
+
+            <div class="rule">
+
+                <div class="rule-top">
+
+                    <div class="rule-name">
+                        Overflow Protection
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            class="ruleSwitch"
+                            onchange="updateRules()"
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="rule-text">
+
+                    If a valid sensor reports an overflow
+                    condition, the system should generate
+                    an immediate protection event.
+
+                </div>
+
+
+                <div class="rule-values">
+
+                    <div class="value">
+
+                        <label>Condition</label>
+
+                        <strong>Overflow Detected</strong>
+
+                    </div>
+
+
+                    <div class="value">
+
+                        <label>Action</label>
+
+                        <strong>Protection Event</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RULE 4 -->
+
+            <div class="rule">
+
+                <div class="rule-top">
+
+                    <div class="rule-name">
+                        Connection Safety
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            class="ruleSwitch"
+                            onchange="updateRules()"
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="rule-text">
+
+                    If communication is lost, automation
+                    should enter a safe state instead of
+                    assuming sensor values.
+
+                </div>
+
+
+                <div class="rule-values">
+
+                    <div class="value">
+
+                        <label>Condition</label>
+
+                        <strong>Connection Lost</strong>
+
+                    </div>
+
+
+                    <div class="value">
+
+                        <label>Action</label>
+
+                        <strong>Safe State</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STATUS -->
+
+        <section class="panel">
+
+            <div class="panel-title">
+
+                <h2>Automation Status</h2>
+
+                <span>REAL-TIME READY</span>
+
+            </div>
+
+
+            <div class="status-box">
+
+                <label>Engine Status</label>
+
+                <strong id="engineStatus">
+                    STANDBY
+                </strong>
+
+            </div>
+
+
+            <div class="status-box">
+
+                <label>Device</label>
+
+                <strong id="deviceStatus">
+                    NO DEVICE CONNECTED
+                </strong>
+
+            </div>
+
+
+            <div class="status-box">
+
+                <label>Sensor Data</label>
+
+                <strong>
+                    NO DATA AVAILABLE
+                </strong>
+
+            </div>
+
+
+            <div class="status-box">
+
+                <label>Motor Control</label>
+
+                <strong>
+                    WAITING FOR CONNECTION
+                </strong>
+
+            </div>
+
+
+            <div class="notice">
+
+                ⚠ Automation rules are configuration
+                settings only at this stage. No motor
+                command will be sent from this page until
+                a real authorised backend/device connection
+                is available.
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<script>
+
+function toggleMenu(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/* COUNT ENABLED RULES */
+
+function updateRules(){
+
+    const switches =
+        document.querySelectorAll(".ruleSwitch");
+
+    let active = 0;
+
+    switches.forEach(item => {
+
+        if(item.checked){
+            active++;
+        }
+
+    });
+
+
+    document.getElementById("ruleCount").textContent =
+        active + " ACTIVE";
+
+
+    /*
+      IMPORTANT:
+
+      Enabling a rule here only changes the
+      local configuration UI.
+
+      It does NOT switch any real motor ON/OFF.
+    */
+}
+
+
+/* FUTURE REAL CONNECTION */
+
+function setAutomationConnection(
+    state,
+    deviceName = "NO DEVICE CONNECTED"
+){
+
+    const badge =
+        document.getElementById("connectionBadge");
+
+    const engine =
+        document.getElementById("engineStatus");
+
+    const device =
+        document.getElementById("deviceStatus");
+
+
+    if(state === "connected"){
+
+        badge.innerHTML =
+            '<span class="dot"></span> CONNECTED';
+
+        engine.textContent =
+            "READY";
+
+        device.textContent =
+            deviceName;
+
+    }
+
+    else if(state === "lost"){
+
+        badge.innerHTML =
+            '<span class="dot"></span> CONNECTION LOST';
+
+        engine.textContent =
+            "SAFE STATE";
+
+        device.textContent =
+            "DEVICE UNAVAILABLE";
+
+    }
+
+    else{
+
+        badge.innerHTML =
+            '<span class="dot"></span> WAITING FOR CONNECTION';
+
+        engine.textContent =
+            "STANDBY";
+
+        device.textContent =
+            "NO DEVICE CONNECTED";
+
+    }
+
+}
+
+
+/* INITIAL STATE */
+
+setAutomationConnection("waiting");
+
+</script>
+
+</body>
+</html>

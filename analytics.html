@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics | Smart Water Site</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#06101d;
+    color:#f2fff9;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+    background:#071525;
+    border-right:1px solid rgba(0,255,140,.18);
+    padding:25px 15px;
+    z-index:1000;
+}
+
+.logo{
+    text-align:center;
+    font-size:21px;
+    font-weight:800;
+    color:#20ff91;
+    letter-spacing:1px;
+    margin-bottom:35px;
+}
+
+.logo span{
+    display:block;
+    color:white;
+    font-size:11px;
+    margin-top:5px;
+    letter-spacing:2px;
+}
+
+.nav a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    color:#9bb2aa;
+    padding:14px 15px;
+    margin:5px 0;
+    border-radius:12px;
+    transition:.25s;
+    font-size:14px;
+}
+
+.nav a:hover,
+.nav a.active{
+    color:#20ff91;
+    background:rgba(32,255,145,.09);
+    box-shadow:inset 3px 0 #20ff91;
+}
+
+.logout{
+    position:absolute;
+    bottom:25px;
+    left:15px;
+    right:15px;
+}
+
+.logout a{
+    color:#ff7777;
+}
+
+/* MAIN */
+.main{
+    margin-left:250px;
+    padding:25px;
+}
+
+.menu-btn{
+    display:none;
+}
+
+/* TOPBAR */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.page-title h1{
+    font-size:27px;
+}
+
+.page-title p{
+    color:#7e9990;
+    font-size:13px;
+    margin-top:6px;
+}
+
+.connection{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:10px 15px;
+    border-radius:30px;
+    border:1px solid rgba(255,193,7,.3);
+    background:rgba(255,193,7,.06);
+    color:#ffc107;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#ffc107;
+    box-shadow:0 0 10px #ffc107;
+}
+
+/* FILTER */
+.filter-bar{
+    background:#091827;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:17px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.filter-bar label{
+    color:#71877f;
+    font-size:11px;
+}
+
+select{
+    background:#07131f;
+    border:1px solid rgba(32,255,145,.16);
+    color:#cfeee1;
+    border-radius:9px;
+    padding:9px 12px;
+    outline:none;
+}
+
+/* SUMMARY */
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:22px;
+}
+
+.card{
+    background:#091827;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:17px;
+    padding:20px;
+}
+
+.card-title{
+    color:#71877f;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.card-value{
+    color:#20ff91;
+    font-size:24px;
+    font-weight:800;
+    margin-top:13px;
+}
+
+.card-sub{
+    color:#5f766d;
+    font-size:10px;
+    margin-top:6px;
+}
+
+/* CHART GRID */
+.chart-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.panel{
+    background:#091827;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:20px;
+    padding:22px;
+}
+
+.panel-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.panel-title h2{
+    font-size:17px;
+}
+
+.panel-title span{
+    color:#71877f;
+    font-size:10px;
+}
+
+/* EMPTY CHART */
+.chart-empty{
+    min-height:250px;
+    border:1px dashed rgba(32,255,145,.13);
+    border-radius:15px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:25px;
+}
+
+.chart-icon{
+    width:58px;
+    height:58px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#20ff91;
+    background:rgba(32,255,145,.06);
+    border:1px solid rgba(32,255,145,.14);
+    font-size:25px;
+    margin-bottom:13px;
+}
+
+.chart-empty h3{
+    color:#c3d8d0;
+    font-size:15px;
+    margin-bottom:7px;
+}
+
+.chart-empty p{
+    color:#647b72;
+    font-size:11px;
+    line-height:1.6;
+    max-width:400px;
+}
+
+/* TABLE */
+.table-panel{
+    margin-top:20px;
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:600px;
+}
+
+th{
+    color:#627970;
+    font-size:10px;
+    text-align:left;
+    padding:13px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+td{
+    color:#a9c1b8;
+    font-size:12px;
+    padding:14px 13px;
+    border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.no-data{
+    text-align:center;
+    padding:25px;
+    color:#60776e;
+}
+
+/* NOTE */
+.note{
+    margin-top:20px;
+    padding:16px;
+    border-radius:14px;
+    background:rgba(255,193,7,.045);
+    border:1px solid rgba(255,193,7,.13);
+    color:#a89762;
+    font-size:11px;
+    line-height:1.6;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.3s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        padding:18px;
+    }
+
+    .menu-btn{
+        display:block;
+        background:#0a1c2d;
+        border:1px solid rgba(32,255,145,.2);
+        color:#20ff91;
+        padding:10px 13px;
+        border-radius:10px;
+        margin-bottom:15px;
+    }
+
+    .summary{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .chart-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:500px){
+
+    .page-title h1{
+        font-size:21px;
+    }
+
+    .connection{
+        font-size:9px;
+        padding:8px;
+    }
+
+    .filter-bar{
+        flex-wrap:wrap;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    .card-value{
+        font-size:21px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        SMART-WATER-SITE
+        <span>WATER MANAGEMENT</span>
+    </div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html">◈ Dashboard</a>
+
+        <a href="tanks.html">▣ Tanks</a>
+
+        <a href="motors.html">⚙ Motors</a>
+
+        <a href="monitoring.html">◉ Live Monitoring</a>
+
+        <a href="automation.html">↻ Automation</a>
+
+        <a href="alerts.html">⚠ Alerts</a>
+
+        <a href="analytics.html" class="active">▥ Analytics</a>
+
+        <a href="activity.html">◷ Activity</a>
+
+        <a href="settings.html">⚙ Settings</a>
+
+    </nav>
+
+    <div class="logout">
+        <a href="login.html">↪ Logout</a>
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+    <button class="menu-btn" onclick="toggleMenu()">
+        ☰ Menu
+    </button>
+
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+        <div class="page-title">
+
+            <h1>Analytics</h1>
+
+            <p>
+                Water usage and system performance insights
+            </p>
+
+        </div>
+
+
+        <div class="connection">
+
+            <span class="dot"></span>
+
+            WAITING FOR CONNECTION
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTER -->
+    <div class="filter-bar">
+
+        <label>TIME RANGE</label>
+
+        <select id="rangeSelect" onchange="changeRange()">
+
+            <option value="today">Today</option>
+
+            <option value="week">Last 7 Days</option>
+
+            <option value="month">Last 30 Days</option>
+
+            <option value="custom">Custom Range</option>
+
+        </select>
+
+        <span id="rangeStatus"
+              style="color:#5f766d;font-size:10px;">
+            No live data
+        </span>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+    <section class="summary">
+
+        <div class="card">
+
+            <div class="card-title">
+                Water Usage
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-sub">
+                No verified data
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Average Level
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-sub">
+                No sensor readings
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Motor Runtime
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-sub">
+                No runtime data
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Efficiency
+            </div>
+
+            <div class="card-value">
+                —
+            </div>
+
+            <div class="card-sub">
+                Requires system data
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CHARTS -->
+    <section class="chart-grid">
+
+
+        <!-- WATER USAGE -->
+        <div class="panel">
+
+            <div class="panel-title">
+
+                <h2>Water Usage Trend</h2>
+
+                <span>LIVE DATA</span>
+
+            </div>
+
+
+            <div class="chart-empty">
+
+                <div class="chart-icon">
+                    ≋
+                </div>
+
+                <h3>
+                    No Usage Data Available
+                </h3>
+
+                <p>
+                    Water-consumption readings will appear
+                    here when verified real-time or historical
+                    data becomes available.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- TANK LEVEL -->
+        <div class="panel">
+
+            <div class="panel-title">
+
+                <h2>Tank Level Trend</h2>
+
+                <span>LIVE DATA</span>
+
+            </div>
+
+
+            <div class="chart-empty">
+
+                <div class="chart-icon">
+                    ◒
+                </div>
+
+                <h3>
+                    No Tank Data Available
+                </h3>
+
+                <p>
+                    Tank-level history will be visualised
+                    here after actual sensor data is received.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- MOTOR -->
+        <div class="panel">
+
+            <div class="panel-title">
+
+                <h2>Motor Runtime</h2>
+
+                <span>HISTORY</span>
+
+            </div>
+
+
+            <div class="chart-empty">
+
+                <div class="chart-icon">
+                    ⚙
+                </div>
+
+                <h3>
+                    No Motor History
+                </h3>
+
+                <p>
+                    Verified motor runtime information will
+                    appear here when available.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SYSTEM -->
+        <div class="panel">
+
+            <div class="panel-title">
+
+                <h2>System Performance</h2>
+
+                <span>ANALYTICS</span>
+
+            </div>
+
+
+            <div class="chart-empty">
+
+                <div class="chart-icon">
+                    ◈
+                </div>
+
+                <h3>
+                    Awaiting System Data
+                </h3>
+
+                <p>
+                    Performance analytics require an
+                    authorised data source and historical
+                    records.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HISTORY TABLE -->
+    <section class="panel table-panel">
+
+        <div class="panel-title">
+
+            <h2>Recent Measurements</h2>
+
+            <span>NO DATA</span>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>TIME</th>
+
+                        <th>TANK</th>
+
+                        <th>LEVEL</th>
+
+                        <th>VOLUME</th>
+
+                        <th>MOTOR</th>
+
+                        <th>STATUS</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="measurementTable">
+
+                    <tr>
+
+                        <td colspan="6"
+                            class="no-data">
+
+                            No verified measurements available.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <div class="note">
+
+        ⚠ <b>Data integrity:</b> Analytics will never
+        generate random readings. Charts, statistics and
+        history will be populated only from verified
+        real-time or stored system data.
+
+    </div>
+
+</main>
+
+
+<script>
+
+function toggleMenu(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/* TIME RANGE */
+
+function changeRange(){
+
+    const select =
+        document.getElementById("rangeSelect");
+
+    const status =
+        document.getElementById("rangeStatus");
+
+    if(select.value === "today"){
+        status.textContent =
+            "Today selected • No live data";
+    }
+
+    else if(select.value === "week"){
+        status.textContent =
+            "Last 7 days selected • No data";
+    }
+
+    else if(select.value === "month"){
+        status.textContent =
+            "Last 30 days selected • No data";
+    }
+
+    else{
+        status.textContent =
+            "Custom range • No data";
+    }
+
+}
+
+
+/*
+ FUTURE ANALYTICS API
+
+ Later the backend can provide real data:
+
+ {
+   waterUsage: [],
+   tankLevels: [],
+   motorRuntime: [],
+   efficiency: [],
+   measurements: []
+ }
+
+ Then charts and tables can be rendered here.
+*/
+
+function loadAnalyticsData(data){
+
+    if(!data){
+        return;
+    }
+
+    /*
+      Only verified backend data should
+      update the analytics interface.
+    */
+
+}
+
+
+/* INITIAL STATE */
+
+changeRange();
+
+</script>
+
+</body>
+</html>

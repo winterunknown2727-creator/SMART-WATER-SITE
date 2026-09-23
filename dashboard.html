@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard | Smart Water Management</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#020b16;
+    color:#fff;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+    background:#041321;
+    border-right:1px solid rgba(39,245,154,.12);
+    padding:25px 15px;
+    z-index:100;
+}
+
+.logo{
+    padding:8px 15px 25px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    margin-bottom:20px;
+}
+
+.logo h2{
+    font-size:18px;
+    letter-spacing:1px;
+}
+
+.logo span{
+    color:#27f59a;
+}
+
+.logo small{
+    display:block;
+    margin-top:7px;
+    color:#6f8491;
+    font-size:10px;
+    letter-spacing:2px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.nav a{
+    text-decoration:none;
+    color:#8398a5;
+    padding:13px 15px;
+    border-radius:9px;
+    font-size:13px;
+    transition:.3s;
+}
+
+.nav a:hover,
+.nav a.active{
+    color:#27f59a;
+    background:rgba(39,245,154,.07);
+}
+
+.logout{
+    position:absolute;
+    bottom:25px;
+    left:15px;
+    right:15px;
+}
+
+.logout a{
+    color:#ff7777;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    min-height:100vh;
+}
+
+/* TOPBAR */
+
+.topbar{
+    height:75px;
+    padding:0 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    background:rgba(2,11,22,.9);
+}
+
+.page-title h1{
+    font-size:20px;
+}
+
+.page-title p{
+    color:#617784;
+    font-size:11px;
+    margin-top:5px;
+}
+
+.connection{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 14px;
+    border-radius:20px;
+    border:1px solid rgba(255,190,70,.15);
+    background:rgba(255,190,70,.04);
+    color:#d2aa62;
+    font-size:11px;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#d2aa62;
+}
+
+/* CONTENT */
+
+.content{
+    padding:30px;
+}
+
+/* WELCOME */
+
+.welcome{
+    padding:28px;
+    border-radius:16px;
+    background:
+        linear-gradient(135deg,
+        rgba(39,245,154,.08),
+        rgba(0,70,130,.10));
+    border:1px solid rgba(39,245,154,.12);
+    margin-bottom:25px;
+}
+
+.welcome h2{
+    font-size:24px;
+}
+
+.welcome p{
+    color:#8196a2;
+    margin-top:8px;
+    font-size:13px;
+}
+
+/* CARDS */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:#061725;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:14px;
+    padding:22px;
+    min-height:130px;
+}
+
+.card-label{
+    color:#718691;
+    font-size:11px;
+    letter-spacing:1px;
+}
+
+.card-value{
+    margin-top:18px;
+    font-size:23px;
+    font-weight:bold;
+}
+
+.waiting{
+    color:#d2aa62;
+}
+
+.card-info{
+    color:#536b78;
+    font-size:10px;
+    margin-top:8px;
+}
+
+/* STATUS */
+
+.status-grid{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:20px;
+}
+
+.panel{
+    background:#061725;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:15px;
+    padding:22px;
+}
+
+.panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.panel-header h3{
+    font-size:15px;
+}
+
+.panel-header span{
+    color:#536b78;
+    font-size:10px;
+}
+
+/* SYSTEM */
+
+.system-state{
+    padding:25px;
+    border-radius:12px;
+    background:rgba(255,190,70,.035);
+    border:1px solid rgba(255,190,70,.10);
+    text-align:center;
+}
+
+.system-icon{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,190,70,.07);
+    border:1px solid rgba(255,190,70,.15);
+    color:#d2aa62;
+    font-size:22px;
+}
+
+.system-state h2{
+    margin-top:15px;
+    font-size:17px;
+    color:#d2aa62;
+}
+
+.system-state p{
+    color:#657c87;
+    font-size:11px;
+    margin-top:7px;
+}
+
+/* TANK PREVIEW */
+
+.tank-row{
+    padding:16px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.tank-row:last-child{
+    border-bottom:none;
+}
+
+.tank-top{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+}
+
+.tank-status{
+    color:#647c87;
+}
+
+.progress{
+    height:6px;
+    margin-top:10px;
+    background:#0c202e;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    width:0%;
+    height:100%;
+    background:#27f59a;
+}
+
+/* MOBILE MENU */
+
+.menu-btn{
+    display:none;
+    background:none;
+    border:none;
+    color:#27f59a;
+    font-size:22px;
+    cursor:pointer;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .status-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.3s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .topbar{
+        padding:0 18px;
+    }
+
+    .content{
+        padding:18px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .connection{
+        font-size:9px;
+        padding:8px;
+    }
+
+    .page-title h1{
+        font-size:16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        <h2>SMART<span>WATER</span></h2>
+        <small>MANAGEMENT SYSTEM</small>
+    </div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html" class="active">
+            Dashboard
+        </a>
+
+        <a href="tanks.html">
+            Tanks
+        </a>
+
+        <a href="motors.html">
+            Motors
+        </a>
+
+        <a href="monitoring.html">
+            Live Monitoring
+        </a>
+
+        <a href="automation.html">
+            Automation
+        </a>
+
+        <a href="alerts.html">
+            Alerts
+        </a>
+
+        <a href="analytics.html">
+            Analytics
+        </a>
+
+        <a href="activity.html">
+            Activity History
+        </a>
+
+        <a href="settings.html">
+            Settings
+        </a>
+
+    </nav>
+
+    <div class="logout">
+        <a href="login.html">Logout</a>
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div style="display:flex;align-items:center;gap:15px;">
+
+            <button class="menu-btn" onclick="toggleMenu()">
+                ☰
+            </button>
+
+            <div class="page-title">
+                <h1>Dashboard</h1>
+                <p>Smart Water Management Control Center</p>
+            </div>
+
+        </div>
+
+        <div class="connection">
+            <span class="dot"></span>
+            WAITING FOR CONNECTION
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+        <div class="welcome">
+
+            <h2>System Overview</h2>
+
+            <p>
+                Monitor water management activity,
+                system availability and connected resources
+                from one centralized platform.
+            </p>
+
+        </div>
+
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="cards">
+
+            <div class="card">
+
+                <div class="card-label">
+                    TOTAL TANKS
+                </div>
+
+                <div class="card-value">
+                    0
+                </div>
+
+                <div class="card-info">
+                    No tank data available
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    TOTAL MOTORS
+                </div>
+
+                <div class="card-value">
+                    0
+                </div>
+
+                <div class="card-info">
+                    No motor data available
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    SYSTEM STATUS
+                </div>
+
+                <div class="card-value waiting">
+                    WAITING
+                </div>
+
+                <div class="card-info">
+                    No active connection
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-label">
+                    AUTOMATION
+                </div>
+
+                <div class="card-value waiting">
+                    READY
+                </div>
+
+                <div class="card-info">
+                    Awaiting system data
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOWER SECTION -->
+
+        <div class="status-grid">
+
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>System Connection</h3>
+
+                    <span>REAL-TIME</span>
+
+                </div>
+
+                <div class="system-state">
+
+                    <div class="system-icon">
+                        ⟳
+                    </div>
+
+                    <h2>
+                        WAITING FOR CONNECTION
+                    </h2>
+
+                    <p>
+                        No real-time device or backend
+                        data is currently available.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- TANK PREVIEW -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>Tank Overview</h3>
+
+                    <span>NO DATA</span>
+
+                </div>
+
+                <div class="tank-row">
+
+                    <div class="tank-top">
+                        <span>TANK DATA</span>
+                        <span class="tank-status">
+                            Waiting
+                        </span>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-fill"></div>
+                    </div>
+
+                </div>
+
+                <div class="tank-row">
+
+                    <div class="tank-top">
+                        <span>WATER LEVEL</span>
+                        <span class="tank-status">
+                            No data
+                        </span>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-fill"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+function toggleMenu(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/*
+    REAL-TIME CONNECTION PLACEHOLDER
+
+    IMPORTANT:
+    No fake connection is created here.
+
+    Later this function can receive data from:
+
+    Backend API
+    WebSocket
+    Database
+    IoT gateway
+
+    Example future states:
+
+    WAITING FOR CONNECTION
+    CONNECTED
+    CONNECTION LOST
+
+*/
+
+function updateConnection(state){
+
+    const connection =
+        document.querySelector(".connection");
+
+    const dot =
+        document.querySelector(".dot");
+
+    if(state === "connected"){
+
+        connection.innerHTML =
+            '<span class="dot"></span> CONNECTED';
+
+    }
+
+    else if(state === "lost"){
+
+        connection.innerHTML =
+            '<span class="dot"></span> CONNECTION LOST';
+
+    }
+
+    else{
+
+        connection.innerHTML =
+            '<span class="dot"></span> WAITING FOR CONNECTION';
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

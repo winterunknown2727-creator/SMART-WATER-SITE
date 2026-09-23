@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Monitoring | Smart Water Site</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#06101d;
+    color:#f2fff9;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+    background:#071525;
+    border-right:1px solid rgba(0,255,140,.18);
+    padding:25px 15px;
+    z-index:1000;
+}
+
+.logo{
+    text-align:center;
+    font-size:21px;
+    font-weight:800;
+    color:#20ff91;
+    letter-spacing:1px;
+    margin-bottom:35px;
+}
+
+.logo span{
+    display:block;
+    color:white;
+    font-size:11px;
+    margin-top:5px;
+    letter-spacing:2px;
+}
+
+.nav a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-decoration:none;
+    color:#9bb2aa;
+    padding:14px 15px;
+    margin:5px 0;
+    border-radius:12px;
+    transition:.25s;
+    font-size:14px;
+}
+
+.nav a:hover,
+.nav a.active{
+    color:#20ff91;
+    background:rgba(32,255,145,.09);
+    box-shadow:inset 3px 0 #20ff91;
+}
+
+.logout{
+    position:absolute;
+    bottom:25px;
+    left:15px;
+    right:15px;
+}
+
+.logout a{
+    color:#ff7777;
+}
+
+/* MAIN */
+.main{
+    margin-left:250px;
+    padding:25px;
+}
+
+/* TOPBAR */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.page-title h1{
+    font-size:27px;
+}
+
+.page-title p{
+    color:#7e9990;
+    font-size:13px;
+    margin-top:6px;
+}
+
+.connection{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:10px 15px;
+    border-radius:30px;
+    border:1px solid rgba(255,193,7,.3);
+    background:rgba(255,193,7,.06);
+    color:#ffc107;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#ffc107;
+    box-shadow:0 0 12px #ffc107;
+}
+
+/* HERO STATUS */
+.status-panel{
+    background:linear-gradient(135deg,#0b1e31,#081624);
+    border:1px solid rgba(32,255,145,.18);
+    border-radius:22px;
+    padding:30px;
+    margin-bottom:22px;
+    position:relative;
+    overflow:hidden;
+}
+
+.status-panel:after{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    right:-100px;
+    top:-120px;
+    background:rgba(32,255,145,.07);
+    border-radius:50%;
+    filter:blur(20px);
+}
+
+.status-content{
+    display:flex;
+    align-items:center;
+    gap:25px;
+    position:relative;
+    z-index:2;
+}
+
+.monitor-ring{
+    width:82px;
+    height:82px;
+    border:2px solid rgba(32,255,145,.25);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    position:relative;
+}
+
+.monitor-ring:before{
+    content:"";
+    width:18px;
+    height:18px;
+    background:#ffc107;
+    border-radius:50%;
+    box-shadow:0 0 20px #ffc107;
+    animation:pulse 1.8s infinite;
+}
+
+@keyframes pulse{
+    0%,100%{transform:scale(1);opacity:1}
+    50%{transform:scale(.65);opacity:.5}
+}
+
+.status-content h2{
+    font-size:22px;
+    margin-bottom:8px;
+}
+
+.status-content p{
+    color:#8ba69c;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.device-status{
+    margin-left:auto;
+    text-align:right;
+}
+
+.device-status small{
+    display:block;
+    color:#718980;
+    margin-bottom:6px;
+}
+
+.device-status strong{
+    color:#ffc107;
+}
+
+/* SUMMARY */
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:#0a1928;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:17px;
+    padding:21px;
+    min-height:120px;
+}
+
+.card-title{
+    color:#769088;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.card-value{
+    font-size:25px;
+    font-weight:800;
+    margin-top:15px;
+    color:#20ff91;
+}
+
+.card-sub{
+    font-size:11px;
+    color:#667d75;
+    margin-top:6px;
+}
+
+/* SECTION */
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:25px 0 14px;
+}
+
+.section-title h2{
+    font-size:18px;
+}
+
+.section-title span{
+    font-size:11px;
+    color:#718980;
+}
+
+/* MONITOR GRID */
+.monitor-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.monitor-card{
+    background:#091827;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:19px;
+    padding:22px;
+    transition:.25s;
+}
+
+.monitor-card:hover{
+    border-color:rgba(32,255,145,.3);
+    transform:translateY(-2px);
+}
+
+.monitor-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.monitor-name{
+    font-size:17px;
+    font-weight:bold;
+}
+
+.status-badge{
+    padding:6px 10px;
+    border-radius:20px;
+    background:rgba(255,193,7,.08);
+    color:#ffc107;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.monitor-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.info-box{
+    background:#07121f;
+    border-radius:12px;
+    padding:14px;
+}
+
+.info-box label{
+    display:block;
+    color:#617970;
+    font-size:10px;
+    margin-bottom:7px;
+    text-transform:uppercase;
+}
+
+.info-box strong{
+    color:#dfffee;
+    font-size:14px;
+}
+
+/* EMPTY */
+.empty{
+    text-align:center;
+    padding:40px 20px;
+    border:1px dashed rgba(255,255,255,.1);
+    border-radius:18px;
+    color:#637a72;
+}
+
+.empty-icon{
+    font-size:35px;
+    margin-bottom:12px;
+}
+
+.empty h3{
+    color:#a6bcb4;
+    margin-bottom:7px;
+}
+
+.empty p{
+    font-size:12px;
+}
+
+/* MOBILE */
+.menu-btn{
+    display:none;
+}
+
+@media(max-width:900px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.3s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        padding:18px;
+    }
+
+    .menu-btn{
+        display:block;
+        background:#0a1c2d;
+        border:1px solid rgba(32,255,145,.2);
+        color:#20ff91;
+        padding:10px 13px;
+        border-radius:10px;
+        margin-bottom:15px;
+    }
+
+    .summary{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .monitor-grid{
+        grid-template-columns:1fr;
+    }
+
+    .status-content{
+        align-items:flex-start;
+    }
+
+    .device-status{
+        display:none;
+    }
+}
+
+@media(max-width:500px){
+
+    .topbar{
+        align-items:flex-start;
+    }
+
+    .connection{
+        font-size:9px;
+        padding:8px 10px;
+    }
+
+    .page-title h1{
+        font-size:21px;
+    }
+
+    .summary{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .card{
+        padding:15px;
+        min-height:105px;
+    }
+
+    .card-value{
+        font-size:21px;
+    }
+
+    .status-panel{
+        padding:22px;
+    }
+
+    .monitor-ring{
+        width:60px;
+        height:60px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        SMART-WATER-SITE
+        <span>WATER MANAGEMENT</span>
+    </div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html">◈ Dashboard</a>
+
+        <a href="tanks.html">▣ Tanks</a>
+
+        <a href="motors.html">⚙ Motors</a>
+
+        <a href="monitoring.html" class="active">◉ Live Monitoring</a>
+
+        <a href="automation.html">↻ Automation</a>
+
+        <a href="alerts.html">⚠ Alerts</a>
+
+        <a href="analytics.html">▥ Analytics</a>
+
+        <a href="activity.html">◷ Activity</a>
+
+        <a href="settings.html">⚙ Settings</a>
+
+    </nav>
+
+    <div class="logout">
+        <a href="login.html">↪ Logout</a>
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+<main class="main">
+
+    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+
+    <div class="topbar">
+
+        <div class="page-title">
+            <h1>Live Monitoring</h1>
+            <p>Real-time water system monitoring</p>
+        </div>
+
+        <div class="connection" id="connectionBadge">
+            <span class="dot"></span>
+            WAITING FOR CONNECTION
+        </div>
+
+    </div>
+
+
+    <!-- SYSTEM STATUS -->
+    <section class="status-panel">
+
+        <div class="status-content">
+
+            <div class="monitor-ring"></div>
+
+            <div>
+                <h2 id="systemStatus">WAITING FOR CONNECTION</h2>
+
+                <p id="systemMessage">
+                    The monitoring system is ready and waiting for
+                    an authorised real-time data connection.
+                </p>
+            </div>
+
+            <div class="device-status">
+
+                <small>DEVICE</small>
+
+                <strong id="deviceName">
+                    NO DEVICE CONNECTED
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+    <section class="summary">
+
+        <div class="card">
+
+            <div class="card-title">
+                Configured Tanks
+            </div>
+
+            <div class="card-value" id="tankCount">
+                0
+            </div>
+
+            <div class="card-sub">
+                From tank configuration
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Configured Motors
+            </div>
+
+            <div class="card-value" id="motorCount">
+                0
+            </div>
+
+            <div class="card-sub">
+                From motor configuration
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Data State
+            </div>
+
+            <div class="card-value" id="dataState">
+                NO DATA
+            </div>
+
+            <div class="card-sub">
+                Waiting for live source
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Last Update
+            </div>
+
+            <div class="card-value" id="lastUpdate">
+                —
+            </div>
+
+            <div class="card-sub">
+                No live update received
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TANK MONITORING -->
+    <div class="section-title">
+
+        <h2>Tank Monitoring</h2>
+
+        <span id="tankMonitorCount">
+            0 TANKS
+        </span>
+
+    </div>
+
+    <div class="monitor-grid" id="tankGrid"></div>
+
+
+    <!-- MOTOR MONITORING -->
+    <div class="section-title">
+
+        <h2>Motor Monitoring</h2>
+
+        <span id="motorMonitorCount">
+            0 MOTORS
+        </span>
+
+    </div>
+
+    <div class="monitor-grid" id="motorGrid"></div>
+
+</main>
+
+
+<script>
+
+/* MOBILE MENU */
+function toggleMenu(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/* SAFE HTML */
+function escapeHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* LOAD CONFIGURED TANKS */
+function loadTanks(){
+
+    const tanks =
+        JSON.parse(
+            localStorage.getItem("smartWaterTanks") || "[]"
+        );
+
+    document.getElementById("tankCount").textContent =
+        tanks.length;
+
+    document.getElementById("tankMonitorCount").textContent =
+        tanks.length + " TANKS";
+
+
+    const grid =
+        document.getElementById("tankGrid");
+
+
+    if(tanks.length === 0){
+
+        grid.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">▣</div>
+                <h3>No Tanks Configured</h3>
+                <p>
+                    Add tanks from Tank Management
+                    before monitoring them.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    grid.innerHTML = tanks.map((tank,index) => `
+
+        <div class="monitor-card">
+
+            <div class="monitor-header">
+
+                <div class="monitor-name">
+                    ${escapeHTML(tank.name || "Tank "+(index+1))}
+                </div>
+
+                <div class="status-badge">
+                    WAITING
+                </div>
+
+            </div>
+
+
+            <div class="monitor-info">
+
+                <div class="info-box">
+
+                    <label>Water Level</label>
+
+                    <strong>—</strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <label>Volume</label>
+
+                    <strong>—</strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <label>Capacity</label>
+
+                    <strong>
+                        ${escapeHTML(tank.capacity || "—")} L
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <label>Last Updated</label>
+
+                    <strong>—</strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join("");
+
+}
+
+
+/* LOAD CONFIGURED MOTORS */
+function loadMotors(){
+
+    const motors =
+        JSON.parse(
+            localStorage.getItem("smartWaterMotors") || "[]"
+        );
+
+    document.getElementById("motorCount").textContent =
+        motors.length;
+
+    document.getElementById("motorMonitorCount").textContent =
+        motors.length + " MOTORS";
+
+
+    const grid =
+        document.getElementById("motorGrid");
+
+
+    if(motors.length === 0){
+
+        grid.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">⚙</div>
+                <h3>No Motors Configured</h3>
+                <p>
+                    Add motors from Motor Management
+                    before monitoring them.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    grid.innerHTML = motors.map((motor,index) => `
+
+        <div class="monitor-card">
+
+            <div class="monitor-header">
+
+                <div class="monitor-name">
+                    ${escapeHTML(motor.name || "Motor "+(index+1))}
+                </div>
+
+                <div class="status-badge">
+                    WAITING
+                </div>
+
+            </div>
+
+
+            <div class="monitor-info">
+
+                <div class="info-box">
+
+                    <label>Motor Status</label>
+
+                    <strong>—</strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <label>Control Mode</label>
+
+                    <strong>
+                        ${escapeHTML(motor.mode || "—")}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <label>Control State</label>
+
+                    <strong>NO DATA</strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <label>Last Updated</label>
+
+                    <strong>—</strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join("");
+
+}
+
+
+/*
+ FUTURE REAL-TIME CONNECTION FUNCTION
+
+ This function is intentionally NOT called with
+ fake data.
+
+ Later the backend/API can call:
+
+ updateRealtimeData(realPayload);
+
+*/
+function updateRealtimeData(payload){
+
+    if(!payload){
+        return;
+    }
+
+    /*
+      Real sensor data will be handled here.
+
+      Example future structure:
+
+      payload = {
+          connection: "connected",
+          device: "actual-device-name",
+          tanks: [...],
+          motors: [...],
+          lastUpdated: "..."
+      };
+
+      Only real received data should update
+      the monitoring interface.
+    */
+
+}
+
+
+/* FUTURE CONNECTION STATE */
+function setConnectionState(state,deviceName="NO DEVICE CONNECTED"){
+
+    const badge =
+        document.getElementById("connectionBadge");
+
+    const status =
+        document.getElementById("systemStatus");
+
+    const device =
+        document.getElementById("deviceName");
+
+
+    if(state === "connected"){
+
+        badge.innerHTML =
+            '<span class="dot"></span> CONNECTED';
+
+        status.textContent =
+            "CONNECTED";
+
+        device.textContent =
+            deviceName;
+
+    }
+
+    else if(state === "lost"){
+
+        badge.innerHTML =
+            '<span class="dot"></span> CONNECTION LOST';
+
+        status.textContent =
+            "CONNECTION LOST";
+
+        device.textContent =
+            "DEVICE UNAVAILABLE";
+
+    }
+
+    else{
+
+        badge.innerHTML =
+            '<span class="dot"></span> WAITING FOR CONNECTION';
+
+        status.textContent =
+            "WAITING FOR CONNECTION";
+
+        device.textContent =
+            "NO DEVICE CONNECTED";
+
+    }
+
+}
+
+
+/* INITIAL PAGE STATE */
+loadTanks();
+loadMotors();
+
+setConnectionState("waiting");
+
+</script>
+
+</body>
+</html>
